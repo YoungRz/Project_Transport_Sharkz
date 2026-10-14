@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { pool } from "../db/db";
 import { adminOnly } from "../Middleware/AdminMiddleware";
 
@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Admin
-router.post("/", adminOnly, async (req, res) => {
+router.post("/", adminOnly, async (req: Request, res: Response) => {
   const { kode_rute, nama_rute, asal, tujuan } = req.body ?? {};
   if (!kode_rute || !nama_rute || !asal || !tujuan) {
     res.status(400).json({ message: "kode_rute, nama_rute, asal, tujuan wajib diisi" });
@@ -37,7 +37,7 @@ router.post("/", adminOnly, async (req, res) => {
   res.status(201).json({ message: "Rute ditambahkan", id: result.insertId });
 });
 
-router.put("/:id", adminOnly, async (req, res) => {
+router.put("/:id", adminOnly, async (req: Request, res:Response) => {
   const { kode_rute, nama_rute, asal, tujuan } = req.body ?? {};
   if (!kode_rute || !nama_rute || !asal || !tujuan) {
     res.status(400).json({ message: "kode_rute, nama_rute, asal, tujuan wajib diisi" });
@@ -54,7 +54,7 @@ router.put("/:id", adminOnly, async (req, res) => {
   res.json({ message: "Rute diupdate" });
 });
 
-router.delete("/:id", adminOnly, async (req, res) => {
+router.delete("/:id", adminOnly, async (req: Request, res: Response) => {
   const [result]: any = await pool.query("DELETE FROM rute WHERE id = ?", [req.params.id]);
   if (result.affectedRows === 0) {
     res.status(404).json({ message: "Rute tidak ditemukan" });
