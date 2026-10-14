@@ -7,8 +7,9 @@ Backend REST API untuk sistem transportasi umum. Dibuat dengan **Express (TypeSc
 - Register dan login untuk **user** (penumpang) dan **driver** (motor atau mobil)
 - Login untuk **admin** (tanpa register, akun admin dibuat lewat database)
 - CRUD **rute** dan **halte** (tambah, edit, hapus khusus admin; lihat data terbuka untuk semua)
-- Admin dapat melihat daftar akun, menghapus user, dan menghapus driver
-- User dan driver dapat menghapus akunnya sendiri
+- Admin dapat melihat daftar akun, menghapus user dan driver, serta mengganti nama dan password user dan driver
+- User dan driver dapat mengganti nama dan password **akunnya sendiri**, dan menghapus akunnya sendiri
+- Tidak ada yang dapat mengubah akun orang lain, kecuali admin terhadap user dan driver (admin tidak dapat mengubah sesama admin)
 - Password disimpan dalam bentuk hash (bcrypt)
 
 ## Teknologi
@@ -182,14 +183,18 @@ Di Thunder Client: tab **Auth**, pilih **Bearer**, tempel token.
 | Role | Hak akses |
 |---|---|
 | Publik (tanpa login) | Register, login, lihat rute dan halte |
-| User | Hapus akun sendiri |
-| Driver | Hapus akun sendiri |
-| Admin | Tambah, edit, hapus rute dan halte; lihat daftar akun; hapus user dan driver |
+| User | Ganti nama sendiri, ganti password sendiri, hapus akun sendiri |
+| Driver | Ganti nama sendiri, ganti password sendiri, hapus akun sendiri |
+| Admin | Tambah, edit, hapus rute dan halte; lihat daftar akun; hapus user dan driver; ganti nama dan password user dan driver; ganti nama dan password akun sendiri |
 
 Catatan:
 - Role tidak pernah diambil dari body request. `/auth/register` selalu membuat `user`, `/auth/register-driver` selalu membuat `driver`.
 - Admin tidak bisa register lewat API.
 - Akun admin tidak bisa dihapus lewat API.
+- Route `/users/me/...` memakai id dari token, bukan dari URL, sehingga user dan driver tidak bisa mengubah akun orang lain.
+- Admin tidak bisa mengubah nama atau password sesama admin lewat route `/admin/...` (respons 403).
+- Ganti password sendiri mewajibkan `password_lama`.
+- Panjang minimal password baru adalah 4 karakter (bisa dinaikkan di kode).
 
 ## Daftar Endpoint
 
@@ -223,17 +228,25 @@ Catatan:
 
 ### Admin
 
-| Method | URL | Fungsi |
-|---|---|---|
-| GET | `/admin/users` | Lihat semua user dan driver (filter: `?role=user` atau `?role=driver`) |
-| DELETE | `/admin/users/:id` | Hapus user (penumpang) |
-| DELETE | `/admin/drivers/:id` | Hapus driver |
+Semua route di bawah ini khusus admin.
+
+| Method | URL | Fungsi | Body |
+|---|---|---|---|
+| GET | `/admin/users` | Lihat semua user dan driver (filter: `?role=user` atau `?role=driver`) | none |
+| PUT | `/admin/users/:id/nama` | Ganti nama user atau driver | `nama` |
+| PUT | `/admin/users/:id/password` | Ganti password user atau driver | `password_baru` |
+| DELETE | `/admin/users/:id` | Hapus user (penumpang) | none |
+| DELETE | `/admin/drivers/:id` | Hapus driver | none |
 
 ### Akun sendiri
 
-| Method | URL | Akses | Fungsi |
-|---|---|---|---|
-| DELETE | `/users/me` | User dan driver | Hapus akun milik token yang dipakai |
+Memakai token milik akun yang bersangkutan. Tidak ada id di URL.
+
+| Method | URL | Akses | Fungsi | Body |
+|---|---|---|---|---|
+| PUT | `/users/me` | Semua yang login | Ganti nama sendiri | `nama` |
+| PUT | `/users/me/password` | Semua yang login | Ganti password sendiri | `password_lama`, `password_baru` |
+| DELETE | `/users/me` | User dan driver | Hapus akun sendiri | none |
 
 ## Contoh Request
 
@@ -271,14 +284,33 @@ POST /halte
 }
 ```
 
+Ganti password sendiri (user atau driver):
+
+```json
+PUT /users/me/password
+{
+  "password_lama": "password123",
+  "password_baru": "passwordbaru456"
+}
+```
+
+Admin mengganti password user atau driver:
+
+```json
+PUT /admin/users/2/password
+{
+  "password_baru": "passwordbaru456"
+}
+```
+
 ## Kode Respons
 
 | Kode | Arti |
 |---|---|
 | 200 / 201 | Berhasil |
-| 400 | Field wajib kosong atau tidak valid |
+| 400 | Field wajib kosong atau tidak valid (termasuk password lama salah) |
 | 401 | Token tidak ada, tidak valid, atau login salah |
-| 403 | Role tidak punya akses |
+| 403 | Role tidak punya akses, atau mencoba mengubah akun admin |
 | 404 | Data tidak ditemukan |
 | 409 | Data duplikat (email atau kode rute sudah dipakai) |
 | 500 | Kesalahan server |
