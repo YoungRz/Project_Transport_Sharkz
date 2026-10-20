@@ -4,10 +4,8 @@ import { pool } from "../db/db";
 import { adminOnly } from "../Middleware/AdminMiddleware";
 const router = Router();
 
-// Semua route di file ini khusus admin
 router.use(adminOnly);
 
-// Lihat akun. Filter: GET /admin/users?role=user  atau  ?role=driver
 router.get("/users", async (req, res) => {
   const { role } = req.query;
   const base =

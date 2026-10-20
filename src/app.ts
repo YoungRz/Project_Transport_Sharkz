@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import { pool } from "./db/db";
 import authRoutes from "./route/auth";
 import ruteRoutes from "./route/rute";
 import halteRoutes from "./route/halte";
 import adminRoutes from "./route/admin";
-
+import userRoutes from "./route/users";
 dotenv.config();
 
 if (!process.env.JWT_SECRET) {
@@ -14,6 +15,8 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
+// Izinkan UI dari localhost di port mana pun (3000, 3001, dst)
+app.use(cors({ origin: /^http:\/\/(localhost|127\.0\.0\.1):\d+$/ }));
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -33,8 +36,8 @@ app.use("/auth", authRoutes);
 app.use("/rute", ruteRoutes);
 app.use("/halte", halteRoutes);
 app.use("/admin", adminRoutes);
+app.use("/users", userRoutes);
 
-// Error handler (Express 5 otomatis meneruskan error dari async handler ke sini)
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.code === "ER_DUP_ENTRY") {
     res.status(409).json({ message: "Data duplikat (kode/email sudah dipakai)" });
@@ -45,10 +48,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     return;
   }
   console.error(err);
-  res.status(500).json({ message: "Server error" });
+  res.status(500).json({ message: "Server error: " + (err.sqlMessage ?? err.message) });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 777;
 app.listen(PORT, () => {
   console.log(`Server jalan di http://localhost:${PORT}`);
 });

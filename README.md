@@ -1,5 +1,8 @@
 # Transportasi Umum API
 
+Kode backend ada di branch `feature-backend`.
+Kode UI ada di branch `feature-ui`.
+
 Backend REST API untuk sistem transportasi umum. Dibuat dengan **Express (TypeScript)** dan **MySQL**, dengan autentikasi JWT dan pembagian hak akses berdasarkan role (admin, user, driver).
 
 ## Fitur

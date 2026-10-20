@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
-import router from "./admin";
+import { Router, Response } from "express";
 import { AuthRequest, verifyToken } from "../Middleware/Authmiddleware";
 import { pool } from "../db/db";
-import { Router, Request, Response } from "express";
+
+const router = Router();
 
 // Ganti nama sendiri
 router.put("/me", verifyToken, async (req: AuthRequest, res: Response) => {
@@ -56,3 +57,22 @@ router.put("/me/password", verifyToken, async (req: AuthRequest, res: Response) 
   await pool.query("UPDATE users SET password = ? WHERE id = ?", [hash, req.user!.id]);
   res.json({ message: "Password berhasil diubah" });
 });
+
+router.delete("/me", verifyToken, async (req: AuthRequest, res: Response) => {
+  if (!req.user || req.user.role === "admin") {
+    res.status(403).json({ message: "Akun admin tidak bisa dihapus lewat API" });
+    return;
+  }
+
+  const [result]: any = await pool.query(
+    "DELETE FROM users WHERE id = ? AND role <> 'admin'",
+    [req.user.id]
+  );
+  if (result.affectedRows === 0) {
+    res.status(404).json({ message: "Akun tidak ditemukan" });
+    return;
+  }
+  res.json({ message: "Akun kamu berhasil dihapus" });
+});
+
+export default router;
