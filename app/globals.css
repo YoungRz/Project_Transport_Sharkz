@@ -1,0 +1,581 @@
+/* Tema: papan petunjuk di stasiun. Abu beton, biru tua, kuning rambu.
+   Warna rute (di RouteBadge.tsx) adalah satu-satunya warna yang mencolok. */
+
+:root {
+  --ground: #e5e8e6;
+  --card: #fbfcfa;
+  --ink: #10202f;
+  --muted: #506070;
+  --rule: #c5ccc8;
+  --wash: #dde3df;
+  --signal: #ffc20e;
+  --signal-hover: #ffd24d;
+  --ok: #17683f;
+  --bad: #a8231c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  line-height: 1.05;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.wrap {
+  max-width: 70rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+main {
+  padding: 2.25rem 0 4rem;
+  min-height: 70vh;
+}
+
+footer {
+  border-top: 2px solid var(--ink);
+  padding: 1.1rem 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- bar atas ---------- */
+
+.topbar {
+  background: var(--ink);
+  color: #fff;
+}
+
+.topbar .wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: var(--signal);
+  color: var(--ink);
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.nav a,
+.nav button {
+  font: inherit;
+  font-weight: 500;
+  color: #dbe3ea;
+  background: none;
+  border: 0;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+.nav a:hover,
+.nav button:hover {
+  color: #fff;
+  background: #1d3246;
+}
+
+.nav a[aria-current="page"] {
+  color: #fff;
+  box-shadow: inset 0 -3px 0 var(--signal);
+  border-radius: 6px 6px 0 0;
+}
+
+.nav a:focus-visible,
+.nav button:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 1px;
+}
+
+/* ---------- kepala halaman ---------- */
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-bottom: 1.75rem;
+}
+
+.lede {
+  margin: 0.6rem 0 0;
+  color: var(--muted);
+  max-width: 34rem;
+}
+
+.search {
+  width: min(100%, 19rem);
+}
+
+/* ---------- tombol ---------- */
+
+.btn {
+  font: inherit;
+  font-weight: 700;
+  min-height: 2.6rem;
+  padding: 0.55rem 1.1rem;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: var(--signal);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--signal-hover);
+}
+
+.btn:focus-visible,
+.tab:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--wash);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--bad);
+  border-color: var(--bad);
+}
+
+.btn-danger:hover {
+  background: #f3d9d6;
+}
+
+.btn-sm {
+  min-height: 2.1rem;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.95rem;
+}
+
+/* ---------- formulir ---------- */
+
+.field {
+  display: grid;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.field label,
+.label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.input {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0.5rem 0.7rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+}
+
+.input:focus-visible {
+  outline: 3px solid var(--signal);
+  outline-offset: 0;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0 1rem;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.toolbar .field {
+  margin-bottom: 0;
+}
+
+/* ---------- panel dan pemberitahuan ---------- */
+
+.panel {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.panel + .panel {
+  margin-top: 1.25rem;
+}
+
+.panel-narrow {
+  max-width: 28rem;
+}
+
+.panel h2 {
+  margin-bottom: 1rem;
+}
+
+.notice {
+  margin-bottom: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-left: 6px solid var(--ink);
+  background: var(--wash);
+  font-size: 0.97rem;
+}
+
+.notice-ok {
+  border-color: var(--ok);
+}
+
+.notice-bad {
+  border-color: var(--bad);
+  background: #f6e1de;
+}
+
+.empty {
+  padding: 2rem 1.25rem;
+  border: 2px dashed var(--rule);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--muted);
+}
+
+.stack-top {
+  margin-top: 1rem;
+}
+
+/* ---------- daftar rute ---------- */
+
+.routes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.route {
+  border-left: 12px solid var(--route, var(--ink));
+  border-top: 1px solid var(--rule);
+}
+
+.route:first-child {
+  border-top: 0;
+}
+
+.route-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+}
+
+.route-name {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.route-path {
+  color: var(--muted);
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  min-width: 3.4rem;
+  height: 3.4rem;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  color: #fff;
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.route-detail {
+  padding: 0.25rem 1.1rem 1.4rem 5.5rem;
+}
+
+/* ---------- diagram halte ---------- */
+
+.stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stop {
+  position: relative;
+  padding: 0 0 1.15rem 2.3rem;
+}
+
+.stop::before {
+  content: "";
+  position: absolute;
+  left: 0.625rem;
+  top: 0.85rem;
+  bottom: -0.85rem;
+  width: 0.25rem;
+  background: var(--route, var(--ink));
+}
+
+.stop:last-child {
+  padding-bottom: 0;
+}
+
+.stop:last-child::before {
+  display: none;
+}
+
+.stop::after {
+  content: "";
+  position: absolute;
+  left: 0.2rem;
+  top: 0.3rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: var(--card);
+  border: 4px solid var(--route, var(--ink));
+}
+
+.stop-name {
+  font-weight: 700;
+}
+
+.stop-no {
+  display: inline-block;
+  min-width: 1.6rem;
+  margin-right: 0.15rem;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.stop-addr {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-left: 1.85rem;
+}
+
+/* ---------- tab ---------- */
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid var(--ink);
+  overflow-x: auto;
+}
+
+.tab {
+  font: inherit;
+  font-weight: 700;
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--wash);
+  color: var(--ink);
+}
+
+.tab[aria-selected="true"] {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- tabel ---------- */
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  font-weight: 700;
+  background: var(--ink);
+  color: #fff;
+}
+
+td {
+  padding: 0.65rem 0.9rem;
+  border-top: 1px solid var(--rule);
+  vertical-align: middle;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  display: inline-block;
+  padding: 0.05rem 0.65rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.chip-admin {
+  background: var(--signal);
+}
+
+.inline-edit {
+  padding: 1.1rem 1rem 0.2rem;
+  background: var(--wash);
+}
+
+/* ---------- info akun ---------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1.5rem;
+  margin: 0;
+}
+
+.facts dt {
+  font-weight: 700;
+}
+
+.facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 36rem) {
+  .route-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .route-row .btn {
+    grid-column: 1 / -1;
+  }
+
+  .route-detail {
+    padding-left: 1.1rem;
+  }
+}
